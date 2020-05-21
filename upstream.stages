@@ -1,0 +1,11 @@
+stage('Upstream Build') {
+    final SETTINGS_XML_ID = "9239af2e-46e3-4ba3-8dd6-1a814fc8a56d"
+    configFileProvider([configFile(fileId: SETTINGS_XML_ID, variable: 'MAVEN_SETTINGS_XML_DOWNSTREAM')]) {
+        def projectCollection = ['kogito-runtimes', 'kogito-apps', 'kogito-examples']
+
+        def gitURL = env.ghprbAuthorRepoGitUrl ?: env.GIT_URL
+        def project = treebuild.getProjectGroupName(treebuild.getProject(gitURL))[1]
+
+        treebuild.upstreamBuild(projectCollection, project, "${SETTINGS_XML_ID}", '-e -nsu validate -Psonarcloud-analysis')
+    }
+}

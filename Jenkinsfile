@@ -2,7 +2,7 @@
 
 pipeline {
     agent {
-        label 'kie-rhel7 && kie-mem16g'
+        label 'kie-rhel7 && kie-mem16g && !master'
     }
     tools {
         maven 'kie-maven-3.6.2'
@@ -29,42 +29,26 @@ pipeline {
                 }
             }
         }
-        stage('Build kogito-runtimes') {
+        stage('Build projects') {
             steps {
                 script {
-                    maven.runMavenWithSubmarineSettings('clean install -Prun-code-coverage', false)
-                    /*
-                       The analysis must happen before the other stages as these clone different projects into a root
-                       directory of kogito-runtimes and are by mistake incorporated in a test coverage report.
-                     */
-                    maven.runMavenWithSubmarineSettings('-e -nsu validate -Psonarcloud-analysis', false)
-                }
-            }
-        }
-        stage('Build kogito-apps') {
-            steps {
-                dir("kogito-apps") {
-                    script {
-                        githubscm.checkoutIfExists('kogito-apps', "$CHANGE_AUTHOR", "$CHANGE_BRANCH", 'kiegroup', "$CHANGE_TARGET")
-                        maven.runMavenWithSubmarineSettings('clean install', false)
-                    }
-                }
-            }
-        }
-        stage('Build kogito-examples') {
-            steps {
-                dir("kogito-examples") {
-                    script {
-                        githubscm.checkoutIfExists('kogito-examples', "$CHANGE_AUTHOR", "$CHANGE_BRANCH", 'kiegroup', "$CHANGE_TARGET")
-                        maven.runMavenWithSubmarineSettings('clean install', false)
-                    }
-                }
-                // Use a separate dir for persistence to not overwrite the test results
-                dir("kogito-examples-persistence") {
-                    script {
-                        githubscm.checkoutIfExists('kogito-examples', "$CHANGE_AUTHOR", "$CHANGE_BRANCH", 'kiegroup', "$CHANGE_TARGET")
-                        // Don't run with tests so far, see: https://github.com/quarkusio/quarkus/issues/6885
-                        maven.runMavenWithSubmarineSettings('clean install -Ppersistence', true)
+                    def file =  (JOB_NAME =~ /\/[a-z,A-Z\-]*\.downstream/).find() ? 'downstream.stages' :
+                                (JOB_NAME =~ /\/[a-z,A-Z\-]*\.compile/).find() ? 'compile.stages' :
+                                'upstream.stages'
+                    if(fileExists("$WORKSPACE/${file}")) {
+                        println "File ${file} exists, loading it."
+                        load("$WORKSPACE/${file}")
+                    } else {
+                        dir("kogito-runtimes") {
+                            def changeAuthor = env.CHANGE_AUTHOR ?: env.ghprbPullAuthorLogin
+                            def changeBranch = env.CHANGE_BRANCH ?: env.ghprbSourceBranch
+                            def changeTarget = env.CHANGE_TARGET ?: env.ghprbTargetBranch
+
+                            println "File ${file} does not exist. Loading the one from kogito-runtimes project. Author [${changeAuthor}], branch [${changeBranch}]..."
+                            githubscm.checkoutIfExists('kogito-runtimes', "${changeAuthor}", "${changeBranch}", 'kiegroup', "${changeTarget}")
+                            println "Loading ${file} file..."
+                            load("${file}")
+                        }
                     }
                 }
             }
@@ -74,26 +58,28 @@ pipeline {
         always {
             sh '$WORKSPACE/trace.sh'
             junit '**/target/surefire-reports/**/*.xml, **/target/failsafe-reports/**/*.xml'
+            echo 'Archiving logs...'
+            archiveArtifacts excludes: '**/target/checkstyle.log', artifacts: '**/*.maven.log,**/target/*.log', fingerprint: false, defaultExcludes: true, caseSensitive: true, allowEmptyArchive: true
+
+            echo 'Archiving testStatusListener and screenshots artifacts...'
+            archiveArtifacts artifacts: '**/target/testStatusListener*,**/target/screenshots/**', fingerprint: false, defaultExcludes: true, caseSensitive: true, allowEmptyArchive: true
         }
         failure {
             script {
                 mailer.sendEmail_failedPR()
             }
-            cleanWs()
         }
         unstable {
             script {
                 mailer.sendEmail_unstablePR()
             }
-            cleanWs()
         }
         fixed {
             script {
                 mailer.sendEmail_fixedPR()
             }
-            cleanWs()
         }
-        success {
+        cleanup {
             cleanWs()
         }
     }
