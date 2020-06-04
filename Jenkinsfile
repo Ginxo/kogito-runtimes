@@ -29,28 +29,11 @@ pipeline {
                 }
             }
         }
-        stage('Build projects') {
-            steps {
-                script {
-                    def file =  (JOB_NAME =~ /\/[a-z,A-Z\-]*\.downstream/).find() ? 'downstream.stages' :
-                                (JOB_NAME =~ /\/[a-z,A-Z\-]*\.compile/).find() ? 'compile.stages' :
-                                'upstream.stages'
-                    if(fileExists("$WORKSPACE/${file}")) {
-                        println "File ${file} exists, loading it."
-                        load("$WORKSPACE/${file}")
-                    } else {
-                        dir("kogito-runtimes") {
-                            def changeAuthor = env.CHANGE_AUTHOR ?: env.ghprbPullAuthorLogin
-                            def changeBranch = env.CHANGE_BRANCH ?: env.ghprbSourceBranch
-                            def changeTarget = env.CHANGE_TARGET ?: env.ghprbTargetBranch
-
-                            println "File ${file} does not exist. Loading the one from kogito-runtimes project. Author [${changeAuthor}], branch [${changeBranch}]..."
-                            githubscm.checkoutIfExists('kogito-runtimes', "${changeAuthor}", "${changeBranch}", 'kiegroup', "${changeTarget}")
-                            println "Loading ${file} file..."
-                            load("${file}")
-                        }
-                    }
-                }
+        stage('Downstream Build') {
+            final SETTINGS_XML_ID = "9239af2e-46e3-4ba3-8dd6-1a814fc8a56d"
+            configFileProvider([configFile(fileId: SETTINGS_XML_ID, variable: 'MAVEN_SETTINGS_XML_DOWNSTREAM')]) {
+                def projectCollection = ['kogito-runtimes', 'kogito-apps', 'kogito-examples']
+                treebuild.downstreamBuild(projectCollection, "${SETTINGS_XML_ID}", '-e -nsu validate -Psonarcloud-analysis', false)
             }
         }
     }
