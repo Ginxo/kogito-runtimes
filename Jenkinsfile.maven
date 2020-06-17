@@ -4,9 +4,7 @@ pipeline{
         stage('Update version in pom'){
             steps{
                dir ("${WORKSPACE}") {
-                   sh 'pwd'
-                   sh 'ls -la'
-                   sh 'cat pom.xml'
+                   updateMavenVersion()
               }     
             }
         }
@@ -15,7 +13,7 @@ pipeline{
 
 def updateMavenVersion(){
 
-   def doc = new XmlSlurper().parse(new File("/home/jenkins/agent/workspace/Custom/mmagnani/kogito-2284/pom.xml"))
+   def doc = new XmlSlurper().parse(new File("pom.xml"))
    def version = doc.version.text()
    println(version)
 }
