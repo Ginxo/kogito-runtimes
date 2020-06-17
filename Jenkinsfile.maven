@@ -3,9 +3,11 @@ pipeline{
     stages{
         stage('Update version in pom'){
             steps{
-                sh 'pwd'
-                 sh 'ls -la'
-                sh 'cat /home/jenkins/agent/workspace/Custom/mmagnani/kogito-2284/pom.xml'
+               dir ("${WORKING_DIR}") {
+                   sh 'pwd'
+                   sh 'ls -la'
+                   sh 'cat pom.xml'
+              }     
             }
         }
     }
