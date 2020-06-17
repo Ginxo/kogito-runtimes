@@ -13,7 +13,11 @@ pipeline{
 
 def updateMavenVersion(){
 
-  String content = this.getClass().getResource('pom.xml').text
-  println(content)
+    def proc = "ls -la".execute()
+    def b = new StringBuffer()
+    proc.consumeProcessErrorStream(b)
+
+    println proc.text
+    println b.toString()
 
 }
