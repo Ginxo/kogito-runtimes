@@ -3,8 +3,14 @@ pipeline{
     stages{
         stage('Update version in pom'){
             steps{
-                sh "echo test" 
+                updateMavenVersion()
             }
         }
     }
+}
+
+def updateMavenVersion(){
+    def pom = new XmlSlurper().parse("pom.xml")
+    def mavenVersion = pom.project.properties.pom.project.properties
+    assert authorResult.text() == '3.6.2'
 }
