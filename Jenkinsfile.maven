@@ -4,6 +4,7 @@ pipeline{
         stage('Update version in pom'){
             steps{
                 sh 'pwd'
+                sh 'cat /home/jenkins/agent/workspace/Custom/mmagnani/kogito-2284/pom.xml'
                 sh 'ls -la'
                 updateMavenVersion()
             }
