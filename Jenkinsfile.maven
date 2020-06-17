@@ -13,6 +13,6 @@ pipeline{
 
 def updateMavenVersion(){
     def pomXml = new XmlSlurper().parse("$WORKSPACE/pom.xml")
-    def mavenVersion = pomXml.project.properties.pom.project.properties
-    assert authorResult.text() == '3.6.2'
+    def mavenVersion = pomXml.project.modelVersion
+    assert mavenVersion.text() == '4.0.0'
 }
