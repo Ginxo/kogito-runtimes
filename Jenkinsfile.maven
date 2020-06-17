@@ -13,7 +13,7 @@ pipeline{
 
 def updateMavenVersion(){
 
-  String content = this.getClass().getResource('/pom.xml').text
+  String content = this.getClass().getResource('pom.xml').text
   println(content)
 
 }
