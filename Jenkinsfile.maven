@@ -12,8 +12,10 @@ pipeline{
 }
 
 def updateMavenVersion(){
-   def dir = new File("${workspace}", 'pom.xml')
-   def pom = new XmlSlurper().parse(dir)
-   println "Version of pom: ${pom.version}"
-
+   def xmlSlurper = new XmlSlurper()
+   def url = getClass().getResource('${workspace}"/pom.xml')
+   def file = new File(url.toURI())
+   def pom = xmlSlurper.parseText(file)
+   def version = pom.version.text()
+   println(version)
 }
