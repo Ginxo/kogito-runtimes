@@ -3,7 +3,7 @@ pipeline{
     stages{
         stage('Update version in pom'){
             steps{
-                sh "test" 
+                sh "echo test" 
             }
         }
     }
