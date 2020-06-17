@@ -3,7 +3,7 @@ pipeline{
     stages{
         stage('Update version in pom'){
             steps{
-               dir ("${WORKING_DIR}") {
+               dir ("${WORKSPACE}") {
                    sh 'pwd'
                    sh 'ls -la'
                    sh 'cat pom.xml'
