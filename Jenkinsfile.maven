@@ -3,6 +3,7 @@ pipeline{
     stages{
         stage('Update version in pom'){
             steps{
+                sh 'ls -la'
                 updateMavenVersion()
             }
         }
