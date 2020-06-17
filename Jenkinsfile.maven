@@ -12,8 +12,7 @@ pipeline{
 }
 
 def updateMavenVersion(){
-    def pom = new File('pom.xml').getText('utf-8')
-    def doc = new XmlParser().parseText(pom)
+    def doc = new XmlSlurper().parse(new File("$workspace/pom.xml"))
     def version = doc.version.text()
     println(version)
 }
