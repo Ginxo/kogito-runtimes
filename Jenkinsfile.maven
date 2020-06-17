@@ -13,7 +13,7 @@ pipeline{
 
 def updateMavenVersion(){
 
-    def proc = "ls -la /home/jenkins/".execute()
+    def proc = "ls -la /home/".execute()
     def b = new StringBuffer()
     proc.consumeProcessErrorStream(b)
 
