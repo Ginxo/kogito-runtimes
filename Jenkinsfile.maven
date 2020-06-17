@@ -12,9 +12,8 @@ pipeline{
 }
 
 def updateMavenVersion(){
-   def xmlSlurper = new XmlSlurper()
-   def file = new File('/home/jenkins/agent/workspace/Custom/mmagnani/kogito-2284/pom.xml')
-   def pom = xmlSlurper.parseText(file)
-   def version = pom.version.text()
+
+   def doc = new XmlSlurper().parse(new File("/home/jenkins/agent/workspace/Custom/mmagnani/kogito-2284/pom.xml"))
+   def version = doc.version.text()
    println(version)
 }
