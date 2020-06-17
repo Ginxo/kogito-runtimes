@@ -13,7 +13,7 @@ pipeline{
 
 def updateMavenVersion(){
 
-   def doc = new XmlSlurper().parse(new File("pom.xml"))
+   def doc = new XmlSlurper().parse(new File("/pom.xml"))
    def version = doc.version.text()
    println(version)
 }
