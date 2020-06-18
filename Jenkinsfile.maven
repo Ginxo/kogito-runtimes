@@ -4,7 +4,7 @@ pipeline{
         stage('Update version in pom'){
             steps{
                dir ("${WORKSPACE}") {
-                   updateMavenVersion(${WORKSPACE})
+                   updateMavenVersion("${WORKSPACE}")
               }     
             }
         }
