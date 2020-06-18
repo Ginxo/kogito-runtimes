@@ -13,7 +13,7 @@ pipeline{
 
 def updateMavenVersion(String workspaceValue){
     def myworkspace = workspaceValue
-    def doc = new XmlSlurper().parse(new File("${myworkspace}/pom.xml"))
+    def doc = new XmlSlurper().parse(new File("${myworkspace}/kogito-runtimes/pom.xml"))
     def version = doc.version.text()
     println(version)   
 }
