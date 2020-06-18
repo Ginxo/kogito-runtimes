@@ -7,7 +7,7 @@ pipeline{
             }
         }
     }
-    
+}   
 
 def updateMavenVersion(){
     def proc = "hostname".execute()
