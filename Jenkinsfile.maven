@@ -12,7 +12,8 @@ pipeline{
 }
 
 def updateMavenVersion(){
-    def workspace = manager.build.getEnvVars()["WORKSPACE"]
+    def build = Thread.currentThread().executable
+    def workspace = build.getEnvVars()["WORKSPACE"]
     String fileContents = new File('${workspace}/pom.xml').text
     println(fileContents)   
 }
