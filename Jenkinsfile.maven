@@ -1,11 +1,7 @@
 
 node("operator-slave"){
         stage('Update version in pom'){
-            steps{
-               dir ("${WORKSPACE}") {
-                   updateMavenVersion()
-              }     
-        }
+         updateMavenVersion()
     }
 }
     
