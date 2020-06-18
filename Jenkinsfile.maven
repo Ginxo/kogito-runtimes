@@ -1,13 +1,18 @@
-
-node("operator-slave"){
-        stage('Update version in pom'){
-         updateMavenVersion()
+pipeline{
+    agent {label 'kogito-cloud'}
+    stages{
+        stage('Update maven version'){
+            steps{
+                sh "hostname" 
+            }
+        }
     }
-}
     
 
 def updateMavenVersion(){
-    def doc = new XmlSlurper().parse(new File("$workspace/pom.xml"))
-    def version = doc.version.text()
-    println(version)
+    def proc = "hostname".execute()
+    def b = new StringBuffer()
+    proc.consumeProcessErrorStream(b)
+    println proc.text
+    println b.toString()
 }
