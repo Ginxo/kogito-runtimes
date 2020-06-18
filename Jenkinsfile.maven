@@ -4,16 +4,16 @@ pipeline{
         stage('Update version in pom'){
             steps{
                dir ("${WORKSPACE}") {
-                   updateMavenVersion()
+                   updateMavenVersion(${WORKSPACE})
               }     
             }
         }
     }
 }
 
-def updateMavenVersion(){
-    def build = Thread.currentThread().executable
-    def workspace = build.getEnvVars()["WORKSPACE"]
-    String fileContents = new File('${workspace}/pom.xml').text
-    println(fileContents)   
+def updateMavenVersion(String workspaceValue){
+    def myworkspace = workspaceValue
+    def doc = new XmlSlurper().parse(new File("${myworkspace}/pom.xml"))
+    def version = doc.version.text()
+    println(version)   
 }
