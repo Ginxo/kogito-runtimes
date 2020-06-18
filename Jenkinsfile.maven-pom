@@ -1,0 +1,20 @@
+pipeline{
+    agent {label 'kogito-cloud'}
+    stages{
+        stage('Update maven version'){
+            steps{
+                sh "hostname"
+                sh "echo ****"
+                updateMavenVersion()
+            }
+        }
+    }
+}   
+def updateMavenVersion(){
+    groovy.util.Node pomNode = getPom("pom.xml")
+    println pomNode
+}
+@NonCPS
+groovy.util.Node getPom(path) {
+  new XmlParser().parseText(readFile(path)).version
+}
