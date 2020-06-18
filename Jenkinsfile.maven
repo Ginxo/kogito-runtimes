@@ -1,5 +1,5 @@
 pipeline{
-    agent {label 'kogito-cloud'}
+    agent {label 'kogito-cloud && !master'}
     stages{
         stage('Update maven version'){
             steps{
