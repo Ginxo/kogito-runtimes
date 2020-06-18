@@ -1,6 +1,5 @@
 
 node("operator-slave"){
-{
     stages{
         stage('Update version in pom'){
             steps{
