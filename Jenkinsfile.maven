@@ -12,7 +12,5 @@ pipeline{
 }
 
 def updateMavenVersion(){
-    def pom = new XmlSlurper().parse(new File("${WORKSPACE}/pom.xml"))
-    def version = pom.version.text()
-    println(version)   
+ def files = findFiles(glob: '**/pom.xml') echo """${files[0].name} ${files[0].path} ${files[0].directory} ${files[0].length} ${files[0].lastModified}"""
 }
