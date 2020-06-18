@@ -12,12 +12,7 @@ pipeline{
 }
 
 def updateMavenVersion(){
-
-    def proc = "ls -la /home/".execute()
-    def b = new StringBuffer()
-    proc.consumeProcessErrorStream(b)
-
-    println proc.text
-    println b.toString()
-
+    def workspace = manager.build.getEnvVars()["WORKSPACE"]
+    String fileContents = new File('${workspace}/pom.xml').text
+    println(fileContents)   
 }
