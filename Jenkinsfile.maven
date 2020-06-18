@@ -9,12 +9,13 @@ pipeline{
             }
         }
     }
-}   
-
-def updateMavenVersion(){
+  def updateMavenVersion(){
     def proc = "hostname".execute()
     def b = new StringBuffer()
     proc.consumeProcessErrorStream(b)
     println proc.text
     println b.toString()
-}
+  }
+}   
+
+
