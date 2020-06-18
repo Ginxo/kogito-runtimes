@@ -1,5 +1,5 @@
 pipeline{
-    agent {label 'kogito-cloud'}
+    agent {label 'operator-slave'}
     stages{
         stage('Update version in pom'){
             steps{
