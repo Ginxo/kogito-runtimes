@@ -1,0 +1,16 @@
+on: [pull_request]
+
+jobs:
+  build-chain:
+    runs-on: ubuntu-latest
+    name: Build Chain Flow
+    steps:
+    - uses: actions/checkout@v2
+    - name: Build Chain
+      id: build-chain
+      uses: Ginxo/github-action-build-chain@master
+      with:
+        child-dependencies: 'kogito-apps'
+        build-command: 'mvn clean install -Prun-code-coverage | mvn -e -nsu validate -Psonarcloud-analysis'
+      env:
+          GITHUB_TOKEN: "${{ secrets.KIE_TOKEN }}"
